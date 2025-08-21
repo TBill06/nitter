@@ -15,11 +15,11 @@ RUN nimble build -d:danger -d:lto -d:strip --mm:refc \
 
 FROM alpine:latest
 WORKDIR /src/
-RUN apk --no-cache add pcre ca-certificates
+RUN apk --no-cache add pcre ca-certificates gosu
 COPY --from=nim /src/nitter/nitter ./
 COPY --from=nim /src/nitter/nitter.example.conf ./nitter.conf
 COPY --from=nim /src/nitter/public ./public
+COPY start.sh .
 EXPOSE 8080
 RUN adduser -h /src/ -D -s /bin/sh nitter
-USER nitter
-CMD ./nitter
+CMD ["./start.sh"]
