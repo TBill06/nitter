@@ -19,8 +19,9 @@ RUN apk --no-cache add pcre ca-certificates
 COPY --from=nim /src/nitter/nitter ./
 COPY --from=nim /src/nitter/public ./public
 COPY start.sh .
+RUN adduser -h /src/ -D -s /bin/sh nitter
+COPY --chown=nitter:nitter /etc/secrets/sessions.jsonl /src/sessions.jsonl
 RUN chmod +x ./start.sh
 EXPOSE 8080
-RUN adduser -h /src/ -D -s /bin/sh nitter
 USER nitter
 CMD ["./start.sh"]

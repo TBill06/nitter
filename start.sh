@@ -30,20 +30,6 @@ cat /src/nitter.conf # Print the generated config to the logs for debugging
 echo "---------------------------------------"
 
 
-# --- Step 2: Handle the sessions.jsonl file ---
-
-# Render will mount our secret file at this location.
-# We check if it exists and then copy it to where Nitter expects it.
-SESSIONS_SECRET_PATH=/etc/secrets/sessions.jsonl
-
-if [ -f "$SESSIONS_SECRET_PATH" ]; then
-    echo "Found sessions.jsonl secret file. Copying to /src/sessions.jsonl"
-    cp $SESSIONS_SECRET_PATH /src/sessions.jsonl
-else
-    echo "WARNING: No sessions.jsonl secret file found at $SESSIONS_SECRET_PATH"
-fi
-
-
 # --- Step 3: Run the main Nitter application ---
 
 # 'exec' replaces the script process with the nitter process.
