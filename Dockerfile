@@ -20,6 +20,7 @@ COPY --from=nim /src/nitter/nitter ./
 COPY --from=nim /src/nitter/nitter.example.conf ./nitter.conf
 COPY --from=nim /src/nitter/public ./public
 COPY start.sh .
+RUN chmod +x ./start.sh
 EXPOSE 8080
 RUN adduser -h /src/ -D -s /bin/sh nitter
 CMD ["./start.sh"]
