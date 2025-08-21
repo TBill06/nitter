@@ -10,4 +10,4 @@ export NITTER_SESSIONS=$(cat /etc/secrets/sessions.jsonl)
 #    as the 'nitter' user.
 #    'su-exec' is like 'sudo' but safer for containers.
 #    Alpine linux (which this image uses) has it built-in.
-exec su-exec nitter ./nitter
+exec /sbin/su-exec nitter ./nitter
