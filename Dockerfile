@@ -21,7 +21,5 @@ COPY --from=nim /src/nitter/nitter.example.conf ./nitter.conf
 COPY --from=nim /src/nitter/public ./public
 EXPOSE 8080
 RUN adduser -h /src/ -D -s /bin/sh nitter
-RUN mkdir -p /etc/secrets
-RUN chown -R nitter:nitter /etc/secrets
 USER nitter
 CMD ./nitter
