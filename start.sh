@@ -2,18 +2,27 @@
 
 # This script runs as 'root' when the container starts.
 
-# The path to the secret file mounted by Render.
+# 1. DEFINE FILE PATHS
+# The original config file copied by the Dockerfile
+DEFAULT_CONFIG_PATH="/src/nitter.conf"
+# The new, temporary config file we will generate
+TEMP_CONFIG_PATH="/tmp/nitter.conf"
+# The path to the secret file mounted by Render
 SECRET_FILE_PATH="/etc/secrets/sessions.jsonl"
-
-# The path to the temporary, writeable copy we will create.
+# The path to the temporary, writeable copy of the secret file
 TEMP_SESSIONS_PATH="/tmp/sessions.jsonl"
 
-# 1. As root, copy the secret file to a writeable location.
-cp "${SECRET_FILE_PATH}" "${TEMP_SESSIONS_PATH}"
+# 2. GENERATE THE CORRECT CONFIG FILE
+# Use 'sed' (a standard text replacement tool) to create a new config file.
+# It takes the default config, replaces the 'localhost' line with the real Redis host,
+# and saves the result to our temporary path.
+sed "s/redisHost = \"localhost\"/redisHost = \"$REDIS_HOST\"/" "${DEFAULT_CONFIG_PATH}" > "${TEMP_CONFIG_PATH}"
 
-# 2. As root, change the ownership of the COPY to the 'nitter' user.
+# 3. FIX THE SESSIONS FILE PERMISSIONS (We know this part works)
+cp "${SECRET_FILE_PATH}" "${TEMP_SESSIONS_PATH}"
 chown nitter:nitter "${TEMP_SESSIONS_PATH}"
 
-# 3. Switch to the 'nitter' user and execute the application,
-#    PASSING THE REDIS CONFIG DIRECTLY ON THE COMMAND LINE.
-exec su nitter -s /bin/sh -c './nitter --conf:redisHost="$REDIS_HOST" --conf:redisPort="$REDIS_PORT"'
+# 4. START THE APPLICATION AS THE 'nitter' USER
+# Tell Nitter to use our newly generated config file (-c flag)
+# And tell it where to find the sessions file (NITTER_SESSION_FILE env var)
+exec su nitter -s /bin/sh -c 'NITTER_SESSION_FILE="/tmp/sessions.jsonl" ./nitter -c "/tmp/nitter.conf"'
