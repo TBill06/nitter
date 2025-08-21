@@ -3,9 +3,7 @@ services:
     name: echo-chamber-redis
     region: oregon
     plan: free
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: "Allow Internal Connections"
+    ipAllowList: []
   
   - type: web
     name: echo-chamber-intel
