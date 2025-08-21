@@ -20,8 +20,6 @@ COPY --from=nim /src/nitter/nitter ./
 COPY --from=nim /src/nitter/public ./public
 COPY start.sh .
 RUN adduser -h /src/ -D -s /bin/sh nitter
-COPY --chown=nitter:nitter /etc/secrets/sessions.jsonl /src/sessions.jsonl
 RUN chmod +x ./start.sh
 EXPOSE 8080
-USER nitter
-CMD ["./start.sh"]
+CMD sh -c 'cp /etc/secrets/sessions.jsonl /src/sessions.jsonl && chown nitter:nitter /src/sessions.jsonl && su nitter -c "./start.sh"'
