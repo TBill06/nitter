@@ -5,12 +5,13 @@ services:
     plan: free
     ipAllowList:
       - source: 0.0.0.0/0
-        description: everywhere
+        description: "Allow Internal Connections"
   
   - type: web
     name: echo-chamber-intel
     region: oregon
     runtime: docker
+    repo: https://github.com/TBill06/nitter
     dockerfilePath: ./Dockerfile
     plan: free
     healthCheckPath: /
@@ -26,5 +27,3 @@ services:
           type: redis
           name: echo-chamber-redis
           property: port
-      - key: SESSIONS_JSONL
-        sync: false

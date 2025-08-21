@@ -15,11 +15,13 @@ RUN nimble build -d:danger -d:lto -d:strip --mm:refc \
 
 FROM alpine:latest
 WORKDIR /src/
-RUN apk --no-cache add pcre ca-certificates
+RUN apk --no-cache add pcre ca-certificates shadow
 COPY --from=nim /src/nitter/nitter ./
 COPY --from=nim /src/nitter/public ./public
 COPY start.sh .
 RUN adduser -h /src/ -D -s /bin/sh nitter
+RUN usermod -a -G 1000 nitter
 RUN chmod +x ./start.sh
+USER nitter
 EXPOSE 8080
-CMD sh -c 'cp /etc/secrets/sessions.jsonl /src/sessions.jsonl && chown nitter:nitter /src/sessions.jsonl && su nitter -c "./start.sh"'
+CMD ["./start.sh"]
