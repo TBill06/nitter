@@ -1,0 +1,29 @@
+services:
+  - type: redis
+    name: echo-chamber-redis
+    region: oregon
+    plan: free
+    ipAllowList:
+      - source: all
+  
+  - type: web
+    name: echo-chamber-intel
+    region: oregon
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /
+
+    envVars:
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: echo-chamber-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: echo-chamber-redis
+          property: port
+      - key: SESSIONS_JSONL
+        sync: false
